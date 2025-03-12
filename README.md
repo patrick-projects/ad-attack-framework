@@ -11,7 +11,21 @@ A comprehensive Active Directory penetration testing framework developed by Patr
   /        \   Made with 😺 by
  /          \  Patrick Crumbaugh
 /            \ 
+
+Inspired by; https://orange-cyberdefense.github.io/ocd-mindmaps/img/mindmap_ad_dark_classic_2025.03.excalidraw.svg
 ```
+
+## ⚠️ Legal Disclaimer
+
+This software is provided for educational and authorized testing purposes ONLY. Usage of this framework for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state, and federal laws.
+
+**Requirements for Usage:**
+- Explicit written permission from the owner of the systems you are testing
+- Compliance with all relevant laws and regulations
+- Testing only in authorized environments
+- Understanding and accepting all risks and responsibilities
+
+Developers assume no liability and are not responsible for any misuse or damage caused by this program.
 
 ## Features
 
@@ -105,17 +119,27 @@ See `scripts/lab_setup/README.md` for detailed setup instructions.
 
 ⚠️ This framework is for educational and authorized testing purposes only. Use responsibly and only on systems you have permission to test.
 
-## License
+## Acknowledgments
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This framework was inspired by and builds upon the work of many security researchers and projects:
+
+### Direct Inspiration
+- Orange Cyberdefense's [GOAD (Game of Active Directory)](https://github.com/Orange-Cyberdefense/GOAD)
+- SpecterOps' [BloodHound](https://github.com/BloodHoundAD/BloodHound)
+- [Impacket](https://github.com/fortra/impacket)
+- Laurent Gaffié's [Responder](https://github.com/lgandx/Responder)
+
+### Additional Credits
+- Will Schroeder (@harmj0y) and Lee Christensen (@tifkin_)'s research on Active Directory security
+- Sean Metcalf's (@PyroTek3) Active Directory security research
+- The [PowerSploit](https://github.com/PowerShellMafia/PowerSploit) project
+- [CrackMapExec](https://github.com/byt3bl33d3r/CrackMapExec)
+- All contributors to the Active Directory Security community
 
 ## Author
 
 Patrick Crumbaugh
 
-## Acknowledgments
+## License
 
-- The BloodHound Project
-- Impacket Project
-- Responder Project
-- Other open-source security tools and their contributors 
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. 

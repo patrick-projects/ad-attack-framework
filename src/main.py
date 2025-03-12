@@ -117,6 +117,27 @@ class ADPentestOrchestrator:
 class MainMenu:
     def __init__(self):
         self.scanning_menu = ScanningMenu()
+        self.show_legal_disclaimer()
+
+    def show_legal_disclaimer(self):
+        self.clear_screen()
+        disclaimer = """
+⚠️  LEGAL DISCLAIMER - READ CAREFULLY  ⚠️
+
+This Active Directory Attack Framework is provided for EDUCATIONAL and AUTHORIZED TESTING PURPOSES ONLY.
+
+By proceeding, you agree to the following conditions:
+1. You have EXPLICIT WRITTEN PERMISSION from the owner of any systems you test
+2. You will comply with all applicable local, state, and federal laws
+3. You will only use this tool in authorized testing environments
+4. You accept all risks and responsibilities associated with using this tool
+
+The developers assume no liability and are not responsible for any misuse or damage.
+
+Unauthorized testing of systems is ILLEGAL and may result in criminal charges.
+"""
+        print(disclaimer)
+        input("\nPress Enter to acknowledge and continue...")
 
     def clear_screen(self):
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -126,6 +147,7 @@ class MainMenu:
         print("""
 ╔══════════════════════════════════════╗
 ║    AD Penetration Testing Suite      ║
+║        ⚠️  USE RESPONSIBLY ⚠️         ║
 ╠══════════════════════════════════════╣
 ║ 1. Network Scanning                  ║
 ║ 2. Attack Vectors (Coming Soon)      ║

