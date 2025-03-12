@@ -1,0 +1,13 @@
+impacket>=0.10.0
+ldap3>=2.9.1
+pyasn1>=0.4.8
+cryptography>=3.4.7
+requests>=2.26.0
+python-nmap>=0.7.1
+paramiko>=2.8.1
+colorama>=0.4.4
+tqdm>=4.62.3
+dnspython>=2.1.0
+pyOpenSSL>=20.0.1
+neo4j>=4.4.0
+bloodhound>=1.0.0 
