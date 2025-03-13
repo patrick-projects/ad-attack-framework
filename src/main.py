@@ -7,8 +7,8 @@ from typing import Dict, Optional
 import os
 
 from config.config import ADConfig, LoggingConfig
-from scanner import ADScanner
-from attack import ADAttacker
+from modules.scanning.scanner import ADScanner
+from modules.attacks.attack import ADAttacker
 from modules.scanning.menu import ScanningMenu
 
 class ADPentestOrchestrator:

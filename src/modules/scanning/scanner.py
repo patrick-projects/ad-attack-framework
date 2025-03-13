@@ -10,6 +10,8 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 import threading
 import re
+import logging
+from config.config import ADConfig
 
 class NetworkScanner:
     def __init__(self):
@@ -285,4 +287,37 @@ class NetworkScanner:
         self.stop_scan = True
         if self.scan_thread and self.scan_thread.is_alive():
             self.scan_thread.join()
-            self.log_status("Scan stopped") 
+            self.log_status("Scan stopped")
+
+class ADScanner:
+    def __init__(self, config: ADConfig):
+        self.config = config
+        self.logger = logging.getLogger(__name__)
+
+    def scan_network(self, target_subnet: str) -> List[str]:
+        """
+        Scan the network for active hosts
+        """
+        self.logger.info(f"Scanning subnet: {target_subnet}")
+        # TODO: Implement network scanning
+        return []
+
+    def enumerate_ldap(self) -> Dict:
+        """
+        Enumerate LDAP information
+        """
+        self.logger.info("Enumerating LDAP information")
+        # TODO: Implement LDAP enumeration
+        return {
+            "users": [],
+            "groups": [],
+            "computers": []
+        }
+
+    def check_smb_signing(self, host: str) -> bool:
+        """
+        Check if SMB signing is enabled on a host
+        """
+        self.logger.info(f"Checking SMB signing on {host}")
+        # TODO: Implement SMB signing check
+        return True 
