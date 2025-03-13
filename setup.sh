@@ -17,8 +17,14 @@ sudo apt install -y \
     python3-venv \
     responder \
     impacket-scripts \
-    bloodhound \
-    neo4j
+    bloodhound
+
+# Install Neo4j
+echo "[*] Installing Neo4j..."
+wget -O - https://debian.neo4j.com/neotechnology.gpg.key | sudo apt-key add -
+echo 'deb https://debian.neo4j.com stable latest' | sudo tee /etc/apt/sources.list.d/neo4j.list
+sudo apt update
+sudo apt install -y neo4j
 
 # Install Python dependencies
 echo "[*] Installing Python dependencies..."
@@ -30,6 +36,7 @@ mkdir -p logs reports loot
 
 # Set up Neo4j for BloodHound
 echo "[*] Setting up Neo4j..."
+sudo systemctl enable neo4j
 sudo systemctl start neo4j
 sudo neo4j-admin set-initial-password bloodhound
 
