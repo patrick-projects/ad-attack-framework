@@ -31,6 +31,7 @@ from datetime import datetime
 from .bloodhound_enum import BloodHoundEnum
 from colorama import Fore, Style, init
 import sys
+from .cisco_smart_install import CiscoSmartInstall
 
 # Initialize colorama
 init()
@@ -50,6 +51,7 @@ class AttackMenu:
         self.quick_attacks = QuickAttacks()
         self.privesc_attacks = PrivEscAttacks()
         self.bloodhound = BloodHoundEnum()
+        self.cisco_smart_install = CiscoSmartInstall()
         self.banner = f"""{Fore.CYAN}
     /\___/\  Active Directory
    (  o o  )  Attack Framework
@@ -2150,6 +2152,7 @@ class AttackMenu:
         print("9. Domain Persistence")
         print("10. View Results")
         print("11. Export Results")
+        print("12. Cisco Smart Install")
         print("0. Exit")
         print()
 
@@ -2171,7 +2174,7 @@ class AttackMenu:
             elif choice == "4":
                 self.handle_coercion()
             elif choice == "5":
-                self.handle_adcs()
+                self.handle_adcs_attacks()
             elif choice == "6":
                 self.handle_trust()
             elif choice == "7":
@@ -2181,9 +2184,11 @@ class AttackMenu:
             elif choice == "9":
                 self.handle_persistence()
             elif choice == "10":
-                self.view_results()
+                self.handle_view_results()
             elif choice == "11":
                 self.export_results()
+            elif choice == "12":
+                self.handle_cisco_smart_install()
             else:
                 print(f"{Fore.RED}Invalid option. Please try again.{Style.RESET_ALL}")
                 input("Press Enter to continue...")
@@ -2222,6 +2227,7 @@ class AttackMenu:
             print("9. View Results")
             print("10. Export All Findings")
             print("11. Exit")
+            print("12. Cisco Smart Install")
             
             choice = input("\nSelect an option: ")
             
@@ -2249,6 +2255,8 @@ class AttackMenu:
                 elif choice == "11":
                     print("\nExiting...")
                     break
+                elif choice == "12":
+                    self.handle_cisco_smart_install()
                 else:
                     print("\nInvalid option selected")
                     
