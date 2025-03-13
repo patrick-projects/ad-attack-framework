@@ -48,7 +48,17 @@ sudo neo4j-admin dbms set-initial-password $NEO4J_PASSWORD
 echo "[*] Creating helper script..."
 cat > run.sh << 'EOF'
 #!/bin/bash
+
+# Get the directory where the script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Activate virtual environment
 source venv/bin/activate
+
+# Add the project root to PYTHONPATH
+export PYTHONPATH="$SCRIPT_DIR:$PYTHONPATH"
+
+# Run the main script
 python src/main.py "$@"
 EOF
 chmod +x run.sh

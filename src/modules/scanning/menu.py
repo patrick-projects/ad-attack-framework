@@ -7,8 +7,8 @@ Displays real-time feedback and allows viewing of previous scan results.
 
 from typing import Optional
 import os
-from .scanner import NetworkScanner
-from ...database.db_manager import DatabaseManager
+from modules.scanning.scanner import NetworkScanner
+from database.db_manager import DatabaseManager
 
 class ScanningMenu:
     def __init__(self):
