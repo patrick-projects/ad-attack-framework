@@ -7,14 +7,14 @@ from typing import Dict, Optional
 import os
 
 from config.config import ADConfig, LoggingConfig
-from modules.scanning.scanner import ADScanner
+from modules.scanning.scanner import NetworkScanner
 from modules.attacks.attack import ADAttacker
 from modules.scanning.menu import ScanningMenu
 
 class ADPentestOrchestrator:
     def __init__(self, config: ADConfig):
         self.config = config
-        self.scanner = ADScanner(config)
+        self.scanner = NetworkScanner()
         self.attacker = ADAttacker(config)
         self.setup_logging()
         
@@ -23,9 +23,9 @@ class ADPentestOrchestrator:
         Configure logging for the application
         """
         logging.basicConfig(
-            level=getattr(logging, LoggingConfig.LOG_LEVEL),
-            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-            filename=LoggingConfig.LOG_FILE
+            level=getattr(logging, self.config.log_level),
+            format=self.config.log_format,
+            filename=self.config.log_file
         )
         self.logger = logging.getLogger(__name__)
         
